@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FulfillmentStatusEnum {
+  DELIVERED
+  PENDING
+  CANCELED
+}
+
+model AppUser {
+  id           BigInt     @id @default(autoincrement())
+  email        String     @unique
+  firstName    String     @map("first_name")
+  lastName     String     @map("last_name")
+  passwordHash Bytes      @map("password_hash")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @default(now()) @map("updated_at")
+  isDeleted    Boolean    @default(false) @map("is_deleted")
+
+  @@map("app_user")
+}
+
+model Customer {
+  id          BigInt    @id @default(autoincrement())
+  firstName   String    @map("first_name")
+  lastName    String    @map("last_name")
+  email       String
+  address     Json?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+  isDeleted   Boolean   @default(false) @map("is_deleted")
+
+  orders    Order[]
+
+  @@map("customer")
+}
+
+model Product {
+  id           BigInt     @id @default(autoincrement())
+  name         String
+  details      String
+  image        String?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @default(now()) @map("updated_at")
+  isDeleted    Boolean    @default(false) @map("is_deleted")
+
+  orders  Order[]
+
+  @@map("product")
+}
+
+model Order {
+  Id                BigInt                @id @default(autoincrement())
+  customerId        BigInt                @map("customer_id")
+  productId         BigInt                @map("product_id")
+  fulfillmentStatus FulfillmentStatusEnum @map("fulfillment_status")
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @default(now()) @map("updated_at")
+  isDeleted         Boolean               @default(false) @map("is_deleted")
+
+  customer          Customer              @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  product           Product               @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("order")
+}
