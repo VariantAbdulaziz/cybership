@@ -14,6 +14,7 @@
     "@trpc/next": "^10.45.2",
     "@trpc/react": "^9.27.4",
     "@trpc/server": "^10.45.2",
+    "bcrypt": "^5.1.1",
     "jose": "^5.9.6",
     "next": "14.2.16",
     "react": "^18",
@@ -21,6 +22,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
