@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -24,8 +24,8 @@ import { toast } from "../ui/use-toast";
 type RegistrationFormValues = z.infer<typeof ClientRegistrationSchema>;
 
 export function RegistrationForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
   const { execute, isExecuting } = useAction(registerAction, {
     onSuccess: async () => {
