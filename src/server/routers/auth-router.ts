@@ -15,7 +15,7 @@ async function generateToken(payload: JWTPayload) {
     .sign(new TextEncoder().encode(secretKey));
 }
 
-export const auth = router({
+export const authRouter = router({
   register: publicProcedure
     .input(RegisterSchema)
     .mutation(async ({ input, ctx }) => {
