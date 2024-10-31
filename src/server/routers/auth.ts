@@ -49,7 +49,7 @@ export const auth = router({
         lastName,
       });
 
-      return { token };
+      return { id: user.id, email, firstName, lastName, token };
     }),
 
   login: publicProcedure.input(LoginSchema).mutation(async ({ input, ctx }) => {
@@ -82,6 +82,12 @@ export const auth = router({
       lastName: user.lastName,
     });
 
-    return { token };
+    return {
+      id: user.id.toString(),
+      email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      token,
+    };
   }),
 });
