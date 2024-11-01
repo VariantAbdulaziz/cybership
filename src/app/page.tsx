@@ -9,6 +9,9 @@ import {
 import { ProductList } from "@/components/dashboard/product-list";
 import CustomerList from "@/components/dashboard/customer-list";
 import OrderList from "@/components/dashboard/order-list";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 interface Props {
   searchParams?: {
@@ -20,16 +23,23 @@ interface Props {
   };
 }
 
-export default function Dashboard({ searchParams }: Props) {
+export default async function Dashboard({ searchParams }: Props) {
   const query = searchParams?.query || "";
   const page = searchParams?.page ? Number(searchParams.page) : 1;
   const tab = searchParams?.tab || "orders";
   const minOrderDate = searchParams?.minOrderDate || undefined;
   const maxOrderDate = searchParams?.maxOrderDate || undefined;
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+      <div className="flex justify-between">
+        <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+        <LogoutButton />
+      </div>
       <Tabs defaultValue={tab} className="w-full">
         <TabsList>
           <TabsTrigger value="orders">Orders</TabsTrigger>
