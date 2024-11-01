@@ -26,12 +26,35 @@ import {
 } from "@/components/ui/form";
 import { ImageUpload } from "./image-upload";
 import { ProductSchema } from "@/lib/validations/product-schema";
+import { toast } from "../ui/use-toast";
+import { useAction } from "next-safe-action/hooks";
+import { createProductAction } from "@/actions/product-actions";
 
 type ProductFormValues = z.infer<typeof ProductSchema>;
 
 export function CreateProductDialog() {
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState<boolean>(false);
+  const { execute, isExecuting } = useAction(createProductAction, {
+    onSuccess: async () => {
+      toast({
+        title: "Product Created",
+        description: "Your product was successfully created!",
+      });
+      form.reset();
+      setImagePreview(null);
+      setOpen(false);
+    },
+    onError: async ({ error }) => {
+      if (error.serverError) {
+        toast({
+          title: "Product Creation Failed!",
+          variant: "destructive",
+          description: error.serverError,
+        });
+      }
+    },
+  });
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(ProductSchema),
@@ -43,9 +66,7 @@ export function CreateProductDialog() {
   });
 
   const handleSubmit = (values: ProductFormValues) => {
-    form.reset();
-    setImagePreview(null);
-    setOpen(false);
+    execute({ ...values });
   };
 
   const handleImageUpload = (file: File) => {

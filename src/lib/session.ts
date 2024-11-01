@@ -8,7 +8,6 @@ import { authOptions } from "@/lib/auth";
 
 export const getSession = React.cache(async () => {
   const session = await getServerSession(authOptions);
-
   if (!session) {
     return null;
   }

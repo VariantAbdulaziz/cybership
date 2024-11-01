@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import ProductList from "@/components/dashboard/product-list";
+import { ProductList } from "@/components/dashboard/product-list";
 
 export default function Dashboard() {
   return (
@@ -27,7 +27,7 @@ export default function Dashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ProductList products={[]} />
+              <ProductList />
             </CardContent>
           </Card>
         </TabsContent>

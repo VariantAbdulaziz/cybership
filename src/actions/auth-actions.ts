@@ -1,6 +1,9 @@
 "use server";
 
-import { ActionError, unauthenticatedAction } from "@/lib/safe-action";
+import {
+  ActionError,
+  unauthenticatedAction,
+} from "@/lib/unauthenticated-action";
 import { LoginSchema } from "@/lib/validations/login-schema";
 import { RegisterSchema } from "@/lib/validations/register-schema";
 import { User } from "@/types";

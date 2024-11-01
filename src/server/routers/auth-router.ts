@@ -49,7 +49,7 @@ export const authRouter = router({
         lastName,
       });
 
-      return { id: user.id, email, firstName, lastName, token };
+      return { id: user.id.toString(), email, firstName, lastName, token };
     }),
 
   login: publicProcedure.input(LoginSchema).mutation(async ({ input, ctx }) => {

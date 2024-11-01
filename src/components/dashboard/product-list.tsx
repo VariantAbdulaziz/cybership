@@ -7,8 +7,36 @@ import {
 } from "@/components/ui/card";
 import { CreateProductDialog } from "./create-product-dialog";
 import { Product } from "@/types";
+import { createServerClient } from "@/server/routers";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/session";
 
-export default function ProductList({ products }: { products: Product[] }) {
+type Props = {
+  page?: number;
+  limit?: number;
+  query?: string;
+};
+
+export async function ProductList({ page = 1, limit = 10, query }: Props) {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+  const { token } = session;
+  const api = await createServerClient({ token });
+  let result;
+  try {
+    result = await api.getProducts.query({
+      page,
+      limit,
+      name: query,
+    });
+  } catch (error) {
+    console.error("Error retrieving products:", error);
+  }
+
+  const products: Product[] = result?.products ?? [];
+
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">

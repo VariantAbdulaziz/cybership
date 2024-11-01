@@ -29,6 +29,10 @@ model AppUser {
   updatedAt    DateTime   @default(now()) @map("updated_at")
   isDeleted    Boolean    @default(false) @map("is_deleted")
 
+  products     Product[]
+  orders       Order[]
+  customers    Customer[]
+
   @@map("app_user")
 }
 
@@ -41,8 +45,10 @@ model Customer {
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @default(now()) @map("updated_at")
   isDeleted   Boolean   @default(false) @map("is_deleted")
+  createdById BigInt    @map("created_by_id")
 
-  orders    Order[]
+  orders      Order[]
+  createdBy   AppUser   @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   @@map("customer")
 }
@@ -55,8 +61,10 @@ model Product {
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @default(now()) @map("updated_at")
   isDeleted    Boolean    @default(false) @map("is_deleted")
+  createdById  BigInt     @map("created_by_id")
 
-  orders  Order[]
+  orders       Order[]
+  createdBy    AppUser    @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   @@map("product")
 }
@@ -69,9 +77,11 @@ model Order {
   createdAt         DateTime              @default(now()) @map("created_at")
   updatedAt         DateTime              @default(now()) @map("updated_at")
   isDeleted         Boolean               @default(false) @map("is_deleted")
+  createdById       BigInt                @map("created_by_id")
 
   customer          Customer              @relation(fields: [customerId], references: [id], onDelete: Cascade)
   product           Product               @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdBy         AppUser               @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   @@map("order")
 }
