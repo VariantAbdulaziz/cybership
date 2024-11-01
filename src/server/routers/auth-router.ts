@@ -43,13 +43,13 @@ export const authRouter = router({
       });
 
       const token = await generateToken({
-        id: user.id,
+        id: Number(user.id),
         email: user.email,
         firstName,
         lastName,
       });
 
-      return { id: user.id.toString(), email, firstName, lastName, token };
+      return { id: Number(user.id), email, firstName, lastName, token };
     }),
 
   login: publicProcedure.input(LoginSchema).mutation(async ({ input, ctx }) => {
@@ -76,14 +76,14 @@ export const authRouter = router({
     }
 
     const token = await generateToken({
-      id: user.id,
+      id: Number(user.id),
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
     });
 
     return {
-      id: user.id.toString(),
+      id: Number(user.id),
       email,
       firstName: user.firstName,
       lastName: user.lastName,

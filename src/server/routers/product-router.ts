@@ -24,8 +24,8 @@ export const productRouter = router({
         });
         return {
           ...product,
-          id: product.id.toString(),
-          createdById: product.createdById.toString(),
+          id: Number(product.id),
+          createdById: Number(product.createdById),
         };
       } catch (error) {
         throw new TRPCError({
@@ -57,8 +57,8 @@ export const productRouter = router({
 
       return {
         ...product,
-        id: product.id.toString(),
-        createdById: product.createdById.toString(),
+        id: Number(product.id),
+        createdById: Number(product.createdById),
       };
     }),
 
@@ -95,8 +95,8 @@ export const productRouter = router({
 
         const transformedProducts = products.map((product) => ({
           ...product,
-          id: product.id.toString(),
-          createdById: product.createdById.toString(),
+          id: Number(product.id),
+          createdById: Number(product.createdById),
         }));
 
         const totalProducts = await db.product.count({
@@ -148,8 +148,8 @@ export const productRouter = router({
         });
         return {
           ...updatedProduct,
-          id: updatedProduct.id.toString(),
-          createdById: updatedProduct.createdById.toString(),
+          id: Number(updatedProduct.id),
+          createdById: Number(updatedProduct.createdById),
         };
       } catch (error) {
         throw new TRPCError({

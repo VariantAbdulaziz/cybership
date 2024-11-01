@@ -26,8 +26,8 @@ export const customerRouter = router({
         });
         return {
           ...customer,
-          id: customer.id.toString(),
-          createdById: customer.createdById.toString(),
+          id: Number(customer.id),
+          createdById: Number(customer.createdById),
         };
       } catch (error) {
         throw new TRPCError({
@@ -60,8 +60,8 @@ export const customerRouter = router({
 
       return {
         ...customer,
-        id: customer.id.toString(),
-        createdById: customer.createdById.toString(),
+        id: Number(customer.id),
+        createdById: Number(customer.createdById),
       };
     }),
 
@@ -93,8 +93,8 @@ export const customerRouter = router({
 
         const transformedCustomers = customers.map((customer) => ({
           ...customer,
-          id: customer.id.toString(),
-          createdById: customer.createdById.toString(),
+          id: Number(customer.id),
+          createdById: Number(customer.createdById),
         }));
 
         const totalCustomers = await db.customer.count({
@@ -148,8 +148,8 @@ export const customerRouter = router({
         });
         return {
           ...updatedCustomer,
-          id: updatedCustomer.id.toString(),
-          createdById: updatedCustomer.createdById.toString(),
+          id: Number(updatedCustomer.id),
+          createdById: Number(updatedCustomer.createdById),
         };
       } catch (error) {
         throw new TRPCError({
