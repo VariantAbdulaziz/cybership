@@ -1,5 +1,5 @@
 export type User = {
-  id: string;
+  id: number;
   email: string;
   firstName: string;
   lastName: string;
@@ -7,13 +7,14 @@ export type User = {
 };
 
 export type Product = {
-  id: string;
+  id: number;
   name: string;
   details: string;
   image: string | null;
 };
 
 export type Customer = {
+  id: number;
   firstName: string;
   lastName: string;
   email: string;

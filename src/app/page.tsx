@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { ProductList } from "@/components/dashboard/product-list";
 import CustomerList from "@/components/dashboard/customer-list";
+import OrderList from "@/components/dashboard/order-list";
 
 export default function Dashboard() {
   return (
@@ -42,6 +43,19 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <CustomerList />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="orders">
+          <Card>
+            <CardHeader>
+              <CardTitle>Orders</CardTitle>
+              <CardDescription>
+                Manage your orders inventory here.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <OrderList />
             </CardContent>
           </Card>
         </TabsContent>
