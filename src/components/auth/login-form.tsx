@@ -18,11 +18,13 @@ import {
 } from "@/components/ui/card";
 import { LoginSchema } from "@/lib/validations/login-schema";
 import { toast } from "../ui/use-toast";
-import { Loader2 } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
+import Link from "next/link";
 
 type LoginFormValues = z.infer<typeof LoginSchema>;
 
 export function LoginForm() {
+  const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const {
     register,
@@ -81,13 +83,28 @@ export function LoginForm() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              {...register("password")}
-              aria-invalid={errors.password ? "true" : "false"}
-              disabled={isLoading}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                {...register("password")}
+                aria-invalid={errors.password ? "true" : "false"}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <EyeOffIcon className="h-4 w-4" />
+                ) : (
+                  <EyeIcon className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
             {errors.password && (
               <p className="text-sm text-red-500" role="alert">
                 {errors.password.message}
@@ -95,7 +112,7 @@ export function LoginForm() {
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col">
+        <CardFooter className="flex flex-col gap-2">
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? (
               <>
@@ -106,6 +123,12 @@ export function LoginForm() {
               "Log in"
             )}
           </Button>
+          <div className="text-sm flex gap-2">
+            <span>don't have an account?</span>
+            <Link className="underline" href={"/register"}>
+              sign up here
+            </Link>
+          </div>
         </CardFooter>
       </form>
     </Card>
