@@ -74,18 +74,20 @@ export function OrderFilter() {
               placeholder="Search orders..."
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center justify-between gap-2">
             <Label htmlFor="minOrderDate">Min Order Date</Label>
             <Input
+              className="w-max"
               id="minOrderDate"
               type="date"
               value={minOrderDate}
               onChange={(e) => setMinOrderDate(e.target.value)}
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center justify-between gap-2">
             <Label htmlFor="maxOrderDate">Max Order Date</Label>
             <Input
+              className="w-max"
               id="maxOrderDate"
               type="date"
               value={maxOrderDate}
