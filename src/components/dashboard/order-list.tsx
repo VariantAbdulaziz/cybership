@@ -1,3 +1,4 @@
+import * as React from "react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -15,6 +16,8 @@ import { createServerClient } from "@/server/routers";
 import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { Product, Customer, Order } from "@/types";
+import { Loader2 } from "lucide-react";
+import { OrderActionMenu } from "./order-action-menu";
 
 async function getOrders() {
   return [
@@ -67,7 +70,7 @@ function StatusBadge({ status }: { status: string }) {
     case "pending":
       color = "yellow";
       break;
-    case "cancelled":
+    case "canceled":
       color = "red";
       break;
     default:
@@ -120,41 +123,55 @@ export default async function OrderList({
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Order List</h1>
-        <div className="flex gap-2">
-          <OrderFilter />
-          <CreateOrderDialog customers={customers} products={products} />
+    <React.Suspense
+      fallback={
+        <div className="w-full h-full">
+          <Loader2 className="mr-2 h-12 w-12 animate-spin" />
         </div>
-      </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Order ID</TableHead>
-            <TableHead>Ordered At</TableHead>
-            <TableHead>Customer Name</TableHead>
-            <TableHead>Product Name</TableHead>
-            <TableHead>Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {orders.map((order) => (
-            <TableRow key={order.Id}>
-              <TableCell>{order.Id}</TableCell>
-              <TableCell>{format(order.createdAt, "PPP")}</TableCell>
-              <TableCell>{`${order.customer?.firstName} ${order.customer?.lastName}`}</TableCell>
-              <TableCell>{order.product?.name}</TableCell>
-              <TableCell>
-                <StatusBadge status={order.fulfillmentStatus} />
-              </TableCell>
+      }
+    >
+      <div className="container mx-auto py-10">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Order List</h1>
+          <div className="flex gap-2">
+            <OrderFilter />
+            <CreateOrderDialog customers={customers} products={products} />
+          </div>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Order ID</TableHead>
+              <TableHead>Ordered At</TableHead>
+              <TableHead>Customer Name</TableHead>
+              <TableHead>Product Name</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>
+                <span className="sr-only">Status</span>
+              </TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {totalPages > 1 && (
-        <ListPagination totalPages={totalPages} tab={"orders"} />
-      )}
-    </div>
+          </TableHeader>
+          <TableBody>
+            {orders.map((order) => (
+              <TableRow key={order.Id}>
+                <TableCell>{order.Id}</TableCell>
+                <TableCell>{format(order.createdAt, "PPP")}</TableCell>
+                <TableCell>{`${order.customer?.firstName} ${order.customer?.lastName}`}</TableCell>
+                <TableCell>{order.product?.name}</TableCell>
+                <TableCell>
+                  <StatusBadge status={order.fulfillmentStatus} />
+                </TableCell>
+                <TableCell>
+                  <OrderActionMenu order={order} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {totalPages > 1 && (
+          <ListPagination totalPages={totalPages} tab={"orders"} />
+        )}
+      </div>
+    </React.Suspense>
   );
 }

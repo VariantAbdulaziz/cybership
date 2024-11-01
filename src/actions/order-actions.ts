@@ -39,3 +39,20 @@ export const updateOrderAction = authenticatedAction
     }
     revalidatePath("/");
   });
+
+export const deleteOrderAction = authenticatedAction
+  .schema(z.object({ id: z.number() }))
+  .action(async ({ ctx, parsedInput }) => {
+    const { api } = ctx;
+    try {
+      await api.deleteOrder.mutate(parsedInput);
+    } catch (e) {
+      console.error(e);
+      if (e instanceof TRPCClientError) {
+        throw new ActionError(e.message || "Unexpected error");
+      } else {
+        throw new ActionError("Unexpected error");
+      }
+    }
+    revalidatePath("/");
+  });
