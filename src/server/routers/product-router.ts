@@ -91,7 +91,11 @@ export const productRouter = router({
       }
 
       try {
-        const products = await db.product.findMany({});
+        const products = await db.product.findMany({
+          where: whereClause,
+          skip: offset,
+          take: limit,
+        });
 
         const transformedProducts = products.map((product) => ({
           ...product,
