@@ -12,3 +12,13 @@ export type Product = {
   details: string;
   image: string | null;
 };
+
+export type Customer = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  address?: {
+    city: string;
+    country: string;
+  };
+};

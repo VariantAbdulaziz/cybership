@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ProductList } from "@/components/dashboard/product-list";
+import CustomerList from "@/components/dashboard/customer-list";
 
 export default function Dashboard() {
   return (
@@ -28,6 +29,19 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <ProductList />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="customers">
+          <Card>
+            <CardHeader>
+              <CardTitle>Customers</CardTitle>
+              <CardDescription>
+                Manage your customers inventory here.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CustomerList />
             </CardContent>
           </Card>
         </TabsContent>
