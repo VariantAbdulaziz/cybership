@@ -76,7 +76,7 @@ export const authRouter = router({
     }
 
     const token = await generateToken({
-      id: user.id.toString(),
+      id: user.id,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
