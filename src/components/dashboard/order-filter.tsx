@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -13,8 +13,9 @@ import {
 import { Filter } from "lucide-react";
 
 export function OrderFilter() {
-  const router = useRouter();
+  const { replace } = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   const [query, setQuery] = useState(searchParams.get("query") || "");
   const [minOrderDate, setMinOrderDate] = useState(
@@ -25,19 +26,13 @@ export function OrderFilter() {
   );
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    setQuery(searchParams.get("query") || "");
-    setMinOrderDate(searchParams.get("minOrderDate") || "");
-    setMaxOrderDate(searchParams.get("maxOrderDate") || "");
-  }, [searchParams]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(searchParams);
     if (query) params.set("query", query);
     if (minOrderDate) params.set("minOrderDate", minOrderDate);
     if (maxOrderDate) params.set("maxOrderDate", maxOrderDate);
-    router.push(`?${params.toString()}`);
+    replace(`${pathname}?${params.toString()}`);
     setOpen(false);
   };
 
@@ -45,7 +40,12 @@ export function OrderFilter() {
     setQuery("");
     setMinOrderDate("");
     setMaxOrderDate("");
-    router.push("");
+    replace("");
+    const params = new URLSearchParams(searchParams);
+    params.delete("query");
+    params.delete("minOrderDate");
+    params.delete("maxOrderDate");
+    replace(`${pathname}?${params.toString()}`);
     setOpen(false);
   };
 
@@ -74,7 +74,7 @@ export function OrderFilter() {
               placeholder="Search orders..."
             />
           </div>
-          <div className="space-y-2">
+          <div className="flex gap-2">
             <Label htmlFor="minOrderDate">Min Order Date</Label>
             <Input
               id="minOrderDate"
@@ -83,7 +83,7 @@ export function OrderFilter() {
               onChange={(e) => setMinOrderDate(e.target.value)}
             />
           </div>
-          <div className="space-y-2">
+          <div className="flex gap-2">
             <Label htmlFor="maxOrderDate">Max Order Date</Label>
             <Input
               id="maxOrderDate"

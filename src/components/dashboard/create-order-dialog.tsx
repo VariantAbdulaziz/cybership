@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import * as React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -43,6 +43,9 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { OrderSchema } from "@/lib/validations/order-schema";
 import { Customer, Product } from "@/types";
+import { createOrderAction } from "@/actions/order-actions";
+import { toast } from "../ui/use-toast";
+import { useAction } from "next-safe-action/hooks";
 
 type OrderFormData = z.infer<typeof OrderSchema>;
 
@@ -55,18 +58,36 @@ export function CreateOrderDialog({
   customers,
   products,
 }: CreateOrderDialogProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const { execute, isExecuting } = useAction(createOrderAction, {
+    onSuccess: async () => {
+      toast({
+        title: "Order Created",
+        description: "Your order was successfully created!",
+      });
+      form.reset();
+      setOpen(false);
+    },
+    onError: async ({ error }) => {
+      if (error.serverError) {
+        toast({
+          title: "Order Creation Failed!",
+          variant: "destructive",
+          description: error.serverError,
+        });
+      }
+    },
+  });
 
   const form = useForm<OrderFormData>({
     resolver: zodResolver(OrderSchema),
     defaultValues: {
-      fulfillmentStatus: "pending",
+      fulfillmentStatus: "PENDING",
     },
   });
 
   const onSubmit = async (data: OrderFormData) => {
-    form.reset();
-    setOpen(false);
+    execute(data);
   };
 
   return (
@@ -96,9 +117,9 @@ export function CreateOrderDialog({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="delivered">Delivered</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                      <SelectItem value="DELIVERED">Delivered</SelectItem>
+                      <SelectItem value="PENDING">Pending</SelectItem>
+                      <SelectItem value="CANCELLED">Cancelled</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -148,7 +169,7 @@ export function CreateOrderDialog({
                         <CommandGroup>
                           {customers.map((customer) => (
                             <CommandItem
-                              value={`${customer.firstName} ${customer.lastName}`}
+                              value={`${customer.firstName} ${customer.lastName} ${customer.email} ${customer.id}`}
                               key={customer.id}
                               onSelect={() => {
                                 form.setValue("customerId", customer.id);
@@ -162,7 +183,7 @@ export function CreateOrderDialog({
                                     : "opacity-0"
                                 )}
                               />
-                              {customer.firstName} {customer.lastName}
+                              {customer.email}
                             </CommandItem>
                           ))}
                         </CommandGroup>
@@ -206,7 +227,7 @@ export function CreateOrderDialog({
                         <CommandGroup>
                           {products.map((product) => (
                             <CommandItem
-                              value={product.name}
+                              value={`${product.name} ${product.id}`}
                               key={product.id}
                               onSelect={() => {
                                 form.setValue("productId", product.id);

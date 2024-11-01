@@ -24,18 +24,17 @@ export async function ProductList({ page = 1, limit = 10, query }: Props) {
   }
   const { token } = session;
   const api = await createServerClient({ token });
-  let result;
+  let products: Product[] = [];
   try {
-    result = await api.getProducts.query({
+    const result = await api.getProducts.query({
       page,
       limit,
       name: query,
     });
+    products = result.products ?? [];
   } catch (error) {
     console.error("Error retrieving products:", error);
   }
-
-  const products: Product[] = result?.products ?? [];
 
   return (
     <div className="container mx-auto p-4">

@@ -10,15 +10,31 @@ import { ProductList } from "@/components/dashboard/product-list";
 import CustomerList from "@/components/dashboard/customer-list";
 import OrderList from "@/components/dashboard/order-list";
 
-export default function Dashboard() {
+interface Props {
+  searchParams?: {
+    query?: string;
+    page?: string;
+    tab?: string;
+    minOrderDate?: string;
+    maxOrderDate?: string;
+  };
+}
+
+export default function Dashboard({ searchParams }: Props) {
+  const query = searchParams?.query || "";
+  const page = searchParams?.page ? Number(searchParams.page) : 1;
+  const tab = searchParams?.tab || "orders";
+  const minOrderDate = searchParams?.minOrderDate || undefined;
+  const maxOrderDate = searchParams?.maxOrderDate || undefined;
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      <Tabs defaultValue="products" className="w-full">
+      <Tabs defaultValue={tab} className="w-full">
         <TabsList>
+          <TabsTrigger value="orders">Orders</TabsTrigger>
           <TabsTrigger value="products">Products</TabsTrigger>
           <TabsTrigger value="customers">Customers</TabsTrigger>
-          <TabsTrigger value="orders">Orders</TabsTrigger>
         </TabsList>
         <TabsContent value="products">
           <Card>
@@ -55,7 +71,12 @@ export default function Dashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <OrderList />
+              <OrderList
+                query={query}
+                page={page}
+                minOrderDate={minOrderDate}
+                maxOrderDate={maxOrderDate}
+              />
             </CardContent>
           </Card>
         </TabsContent>

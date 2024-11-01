@@ -18,8 +18,20 @@ export type Customer = {
   firstName: string;
   lastName: string;
   email: string;
-  address?: {
-    city: string;
-    country: string;
-  };
+  city: string | null;
+  country: string | null;
+};
+
+export type Order = {
+  Id: number;
+  customerId: number;
+  productId: number;
+  fulfillmentStatus: "DELIVERED" | "PENDING" | "CANCELED";
+  createdAt: string;
+  updatedAt: string;
+  isDeleted: boolean;
+  createdById: number;
+
+  customer: Customer | null;
+  product: Product | null;
 };

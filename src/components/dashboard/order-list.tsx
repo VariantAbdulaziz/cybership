@@ -11,6 +11,10 @@ import {
 import { CreateOrderDialog } from "./create-order-dialog";
 import { OrderFilter } from "./order-filter";
 import { ListPagination } from "../list-pagination";
+import { createServerClient } from "@/server/routers";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { Product, Customer, Order } from "@/types";
 
 async function getOrders() {
   return [
@@ -83,14 +87,37 @@ type Props = {
 
 export default async function OrderList({
   page,
-  limit,
-  query,
+  limit = 5,
   minOrderDate,
   maxOrderDate,
 }: Props) {
-  const orders = await getOrders();
-  const customers = await getCustomers();
-  const products = await getProducts();
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+
+  const { token } = session;
+  const api = await createServerClient({ token });
+
+  let products: Product[] = [];
+  let orders: Order[] = [];
+  let customers: Customer[] = [];
+  let totalPages = 0;
+
+  try {
+    const [productsResult, ordersResult, customersResult] = await Promise.all([
+      api.getProducts.query({}),
+      api.getOrders.query({ page, limit, minOrderDate, maxOrderDate }),
+      api.getCustomers.query({}),
+    ]);
+
+    products = productsResult?.products ?? [];
+    orders = ordersResult?.orders ?? [];
+    customers = customersResult?.customers ?? [];
+    totalPages = ordersResult?.pageCount ?? 0;
+  } catch (error) {
+    console.error("Error retrieving data:", error);
+  }
 
   return (
     <div className="container mx-auto py-10">
@@ -113,19 +140,21 @@ export default async function OrderList({
         </TableHeader>
         <TableBody>
           {orders.map((order) => (
-            <TableRow key={order.id}>
-              <TableCell>{order.id}</TableCell>
+            <TableRow key={order.Id}>
+              <TableCell>{order.Id}</TableCell>
               <TableCell>{format(order.createdAt, "PPP")}</TableCell>
-              <TableCell>{`${order.customer.firstName} ${order.customer.lastName}`}</TableCell>
-              <TableCell>{order.product.name}</TableCell>
+              <TableCell>{`${order.customer?.firstName} ${order.customer?.lastName}`}</TableCell>
+              <TableCell>{order.product?.name}</TableCell>
               <TableCell>
-                <StatusBadge status={order.status} />
+                <StatusBadge status={order.fulfillmentStatus} />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <ListPagination totalPages={10} tab={"orders"} />
+      {totalPages > 1 && (
+        <ListPagination totalPages={totalPages} tab={"orders"} />
+      )}
     </div>
   );
 }

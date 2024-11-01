@@ -4,6 +4,7 @@ import { publicProcedure } from "../procedures/public-procedure";
 import { authRouter } from "./auth-router";
 import { productRouter } from "./product-router";
 import { customerRouter } from "./customer-router";
+import { orderRouter } from "./order-router";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
 
@@ -17,7 +18,8 @@ export const appRouter = mergeRouters(
   healthCheckRouter,
   authRouter,
   productRouter,
-  customerRouter
+  customerRouter,
+  orderRouter
 );
 
 export const createCaller = createCallerFactory(appRouter);

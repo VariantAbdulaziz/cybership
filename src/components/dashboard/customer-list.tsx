@@ -29,17 +29,17 @@ export default async function CustomerList({
   }
   const { token } = session;
   const api = await createServerClient({ token });
-  let result;
+  let customers: Customer[] = [];
   try {
-    result = await api.getCustomers.query({
+    const result = await api.getCustomers.query({
       page,
       limit,
       query,
     });
+    customers = result?.customers ?? [];
   } catch (error) {
     console.error("Error retrieving products:", error);
   }
-  const customers = result?.customers ?? [];
   return (
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
